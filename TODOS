@@ -1,12 +1,14 @@
 This file contains TODOs
 
 NOT STARTED
--Points
 -Game win/end conditions
 -graphics
 
 IN PROGRESS
 -checking for algorithm bugs
+    FOUND BUGS
+    -adds random no matter what (resolved)
 
 DONE
+-Points
 -Algorithm
