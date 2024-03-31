@@ -3,6 +3,7 @@ This file contains TODOs
 NOT STARTED
 -Game win/end conditions
 -graphics
+-Make into multiple files with make file (do at the end)
 
 IN PROGRESS
 -checking for algorithm bugs
