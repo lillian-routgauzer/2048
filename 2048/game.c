@@ -6,12 +6,6 @@
 #include <time.h>
 
 #define SIZE 4
-
-int down; //s
-int up; //w
-int left; //a
-int right; //d
-
 int board[4][4];
 
 //defines each individual tile.
@@ -26,6 +20,17 @@ typedef struct game{
     tile tiles[4][4];
     int score;
 }game;
+
+int keepscore(game *c) {
+    c->score = 0; 
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            int val = c->tiles[i][j].value;
+            c->score += val; 
+        }
+    }
+    return c->score; 
+}
 
 //function add tiles to game.
 tile* addtile(game *c, tile *t){
@@ -50,14 +55,13 @@ tile* randtile(game* c) {
     c->tiles[i][j].locationy = j;
     return &(c->tiles[i][j]); 
 }
-
 //2048 math function for up.
-tile* mathup(game *c) {
+tile* mathup(game *c, int* change) {
     printf("Moved up\n");
     tile* result = NULL;
 
     for(int j = 0; j < SIZE; j++) {
-        for(int i = 1; i < SIZE; i++) { // Start from the second row
+        for(int i = 1; i < SIZE; i++) { 
             int b = c->tiles[i][j].value;
             if(b != 0) {
                 int k = i - 1;
@@ -68,7 +72,8 @@ tile* mathup(game *c) {
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[k][j];
                         printf("slid\n");
-                        i = k; // Update i to continue checking upward
+                        i = k; 
+                        *change = 1;
                     }
                     else if(above_value == b) {
                         c->tiles[k][j].value = b * 2;
@@ -76,8 +81,9 @@ tile* mathup(game *c) {
                         result = &c->tiles[k][j];
                         printf("mathed\n");
                         break;
+                        *change = 1;
                     }
-                    else { // If there's an obstacle above (different value), stop moving up
+                    else { 
                         break;
                     }
                     k--;
@@ -85,13 +91,16 @@ tile* mathup(game *c) {
             }
         }
     }
+    if(*change == 1){
     tile* l = randtile(c);
     addtile(c, l);
+    *change = 0;
+    }
     return result;
 }
 
 //2048 math function for down.
-tile* mathdown(game *c) {
+tile* mathdown(game *c, int* change) {
     printf("Moved down\n");
     tile* result = NULL; 
 
@@ -106,7 +115,8 @@ tile* mathdown(game *c) {
                     c->tiles[k][j].value = b;
                     c->tiles[i][j].value = 0;
                     result = &c->tiles[k][j];
-                    printf("slid\n"); 
+                    printf("slid\n");
+                    *change = 1; 
                     break;
                 }
                 if (below_value == b) { 
@@ -114,6 +124,7 @@ tile* mathdown(game *c) {
                     c->tiles[i][j].value = 0;
                     result = &c->tiles[k][j]; 
                     printf("mathed\n");
+                    *change = 1;
                     break;
                 }
                 else { 
@@ -124,18 +135,20 @@ tile* mathdown(game *c) {
         }
     }
 }
- tile* l = randtile(c);
+    if(*change == 1){
+    tile* l = randtile(c);
     addtile(c, l);
+    *change = 0;
+    }
     return result; 
 }
 
 //2048 math function for left.
-tile* mathleft(game *c) {
+tile* mathleft(game *c, int *change) {
     printf("Moved left\n");
     tile* result = NULL;
-
     for(int i = 0; i < SIZE; i++) {
-        for(int j = 1; j < SIZE; j++) { // Start from the second column
+        for(int j = 1; j < SIZE; j++) { 
             int b = c->tiles[i][j].value;
             if(b != 0) {
                 int k = j - 1;
@@ -146,13 +159,15 @@ tile* mathleft(game *c) {
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k];
                         printf("slid\n");
-                        j = k; // Update j to continue checking leftward
+                        j = k; 
+                        *change = 1;
                     }
                     else if(left_value == b) {
                         c->tiles[i][k].value = b * 2;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k];
                         printf("mathed\n");
+                        *change = 1;
                         break;
                     }
                     else {
@@ -163,17 +178,20 @@ tile* mathleft(game *c) {
             }
         }
     }
+    if(*change == 1){
     tile* l = randtile(c);
     addtile(c, l);
+    *change = 0;
+    }
     return result;
 }
 
 //2048 math function for right.
-tile* mathright(game *c) {
+tile* mathright(game *c, int *change) {
     tile* result = NULL; 
     printf("Moved right\n");
     for(int i = 0; i < SIZE; i++) { 
-        for(int j = SIZE - 1; j >= 0; j--) { // Iterate from right to left
+        for(int j = SIZE - 1; j >= 0; j--) { 
             int b = c->tiles[i][j].value; 
             if(b != 0) { 
                 int k = j + 1; 
@@ -184,13 +202,15 @@ tile* mathright(game *c) {
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k]; 
                         printf("slid\n");
-                        j = k; // Update j to continue checking rightward
+                        j = k; 
+                        *change = 1;
                     }
                     else if(right_value == b) { 
                         c->tiles[i][k].value = b * 2;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k]; 
                         printf("mathed\n");
+                        *change = 1;
                         break; 
                     }
                     else { 
@@ -201,8 +221,11 @@ tile* mathright(game *c) {
             }
         }
     }
+    if(*change == 1){
     tile* l = randtile(c);
     addtile(c, l);
+    *change = 0;
+    }
     return result;
 }
       
@@ -258,7 +281,10 @@ int main() {
     init_board();
     addtile(&g, randtile(&g));
     addtile(&g, randtile(&g));
+    keepscore(&g);
+    printf("SCORE: %d\n", keepscore(&g));
     printboard(&g);
+    int change = 0;
 
     // Main game loop
     while (1) {
@@ -269,33 +295,41 @@ int main() {
         switch (input) {
             case 'w':
             {
-            tile* moved_up = mathup(&g);
+            tile* moved_up = mathup(&g, &change);
                 if (moved_up != NULL) {
                     addtile(&g, moved_up);
+                    keepscore(&g);
+                    printf("SCORE: %d \n", keepscore(&g));
                     printboard(&g);
                 }
             }
             break;
             case 'a':{
-            tile* moved_left = mathleft(&g);
+            tile* moved_left = mathleft(&g, &change);
                 if (moved_left != NULL) {
                     addtile(&g, moved_left);
+                    keepscore(&g);
+                    printf("SCORE: %d \n", keepscore(&g));
                     printboard(&g);
                 }
             }
                 break;
             case 's':{
-            tile* moved_down = mathdown(&g);
+            tile* moved_down = mathdown(&g, &change);
                 if (moved_down != NULL) {
                     addtile(&g, moved_down);
+                    keepscore(&g);
+                    printf("SCORE: %d \n", keepscore(&g));
                     printboard(&g);
                 }
                 break;
             }
             case 'd':{
-            tile* moved_right = mathright(&g);
+            tile* moved_right = mathright(&g, &change);
                 if (moved_right != NULL) {
                     addtile(&g, moved_right);
+                    keepscore(&g);
+                    printf("SCORE: %d \n", keepscore(&g));
                     printboard(&g);
                 }
                 break;
