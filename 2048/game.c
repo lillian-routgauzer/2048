@@ -300,28 +300,29 @@ int main() {
                     addtile(&g, moved_up);
                     keepscore(&g);
                     printf("SCORE: %d \n", keepscore(&g));
-                    printboard(&g);
                 }
+                printboard(&g);
+                break;
             }
-            break;
             case 'a':{
             tile* moved_left = mathleft(&g, &change);
                 if (moved_left != NULL) {
                     addtile(&g, moved_left);
                     keepscore(&g);
                     printf("SCORE: %d \n", keepscore(&g));
-                    printboard(&g);
                 }
-            }
+                printboard(&g);
                 break;
+            }    
             case 's':{
             tile* moved_down = mathdown(&g, &change);
                 if (moved_down != NULL) {
                     addtile(&g, moved_down);
                     keepscore(&g);
                     printf("SCORE: %d \n", keepscore(&g));
-                    printboard(&g);
+                    
                 }
+                printboard(&g);
                 break;
             }
             case 'd':{
@@ -330,8 +331,8 @@ int main() {
                     addtile(&g, moved_right);
                     keepscore(&g);
                     printf("SCORE: %d \n", keepscore(&g));
-                    printboard(&g);
                 }
+                printboard(&g);
                 break;
             }
             default:
