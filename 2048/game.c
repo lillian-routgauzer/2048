@@ -277,6 +277,14 @@ char getch() {
 
 
 int main() {
+    printf("                LET'S PLAY 2048!\n");
+    printf("                  HOW TO PLAY:\n");
+    printf("      Use your arrow keys to move the tiles.\n");
+    printf("Tiles with the same number merge into one when they touch.\n");
+    printf("            Add them up to reach 2048!\n");
+    printf("               Press c to continue.\n");
+    char input1 = getch();
+    if(input1 = 'c'){
     game g = {};
     init_board();
     addtile(&g, randtile(&g));
@@ -338,6 +346,7 @@ int main() {
             default:
                 printf("Please used 'w' 'a' 's' 'd' keys. \n");
         }
+    }
     }
 }
 
