@@ -1,13 +1,15 @@
 This file contains TODOs
 
 NOT STARTED
--Game win/end conditions
 -graphics
    -What's happening instead of numbers?
    -Cuter UI (???)
 -Make into multiple files with make file (do at the end)
 
 IN PROGRESS
+-Game win/end conditions
+   -end loss condition (done)
+   -end win condition (to do)
 -checking for algorithm bugs
     FOUND BUGS
     -adds random no matter what (resolved)
