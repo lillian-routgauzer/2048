@@ -276,15 +276,16 @@ char getch() {
 }
 
 
-int main() {
+int main(){
     printf("                LET'S PLAY 2048!\n");
     printf("                  HOW TO PLAY:\n");
     printf("      Use your arrow keys to move the tiles.\n");
     printf("Tiles with the same number merge into one when they touch.\n");
     printf("            Add them up to reach 2048!\n");
     printf("               Press c to continue.\n");
+    int m = 1;
     char input1 = getch();
-    if(input1 = 'c'){
+    if(input1 == 'c'){
     game g = {};
     init_board();
     addtile(&g, randtile(&g));
@@ -293,60 +294,72 @@ int main() {
     printf("SCORE: %d\n", keepscore(&g));
     printboard(&g);
     int change = 0;
+        while(1) {
+            printf("Enter your move (w/a/s/d): ");
+            char input = getch();
+            printf("%c\n", input); 
 
-    // Main game loop
-    while (1) {
-        printf("Enter your move (w/a/s/d): ");
-        char input = getch();
-        printf("%c\n", input); 
-
-        switch (input) {
-            case 'w':
-            {
-            tile* moved_up = mathup(&g, &change);
-                if (moved_up != NULL) {
-                    addtile(&g, moved_up);
-                    keepscore(&g);
-                    printf("SCORE: %d \n", keepscore(&g));
+            switch (input) {
+                case 'w':
+                {
+                tile* moved_up = mathup(&g, &change);
+                    if (moved_up != NULL) {
+                        addtile(&g, moved_up);
+                        keepscore(&g);
+                        printf("SCORE: %d \n", keepscore(&g));
+                    }
+                    printboard(&g);
+                    break;
                 }
-                printboard(&g);
-                break;
-            }
-            case 'a':{
-            tile* moved_left = mathleft(&g, &change);
-                if (moved_left != NULL) {
-                    addtile(&g, moved_left);
-                    keepscore(&g);
-                    printf("SCORE: %d \n", keepscore(&g));
-                }
-                printboard(&g);
-                break;
-            }    
-            case 's':{
-            tile* moved_down = mathdown(&g, &change);
-                if (moved_down != NULL) {
-                    addtile(&g, moved_down);
-                    keepscore(&g);
-                    printf("SCORE: %d \n", keepscore(&g));
+                case 'a':{
+                tile* moved_left = mathleft(&g, &change);
+                    if (moved_left != NULL) {
+                        addtile(&g, moved_left);
+                        keepscore(&g);
+                        printf("SCORE: %d \n", keepscore(&g));
+                    }
+                    printboard(&g);
+                    break;
+                }    
+                case 's':{
+                tile* moved_down = mathdown(&g, &change);
+                    if (moved_down != NULL) {
+                        addtile(&g, moved_down);
+                        keepscore(&g);
+                        printf("SCORE: %d \n", keepscore(&g));
                     
+                    }
+                    printboard(&g);
+                    break;
                 }
-                printboard(&g);
-                break;
-            }
-            case 'd':{
-            tile* moved_right = mathright(&g, &change);
-                if (moved_right != NULL) {
-                    addtile(&g, moved_right);
-                    keepscore(&g);
-                    printf("SCORE: %d \n", keepscore(&g));
+                case 'd':{
+                tile* moved_right = mathright(&g, &change);
+                    if (moved_right != NULL) {
+                        addtile(&g, moved_right);
+                        keepscore(&g);
+                        printf("SCORE: %d \n", keepscore(&g));
+                    }
+                    printboard(&g);
+                    break;
                 }
-                printboard(&g);
-                break;
+                default:
+                    printf("Please used 'w' 'a' 's' 'd' keys. \n");
             }
-            default:
-                printf("Please used 'w' 'a' 's' 'd' keys. \n");
+        m=0;
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(g.tiles[i][j].value == 0){
+                    m += 1;
+                }
+            }
+        }
+        if(m == 0) {
+                printf("GAME OVER\n");
+                printf("You lose\n");
+                break; // End the game loop
+            }
         }
     }
-    }
 }
+    
 
