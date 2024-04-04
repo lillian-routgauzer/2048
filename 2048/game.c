@@ -72,7 +72,6 @@ tile* mathup(game *c, int* change) {
                         c->tiles[k][j].value = b;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[k][j];
-                        printf("slid\n");
                         i = k; 
                         *change = 1;
                     }
@@ -80,7 +79,6 @@ tile* mathup(game *c, int* change) {
                         c->tiles[k][j].value = b * 2;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[k][j];
-                        printf("mathed\n");
                         break;
                         *change = 1;
                     }
@@ -116,13 +114,11 @@ tile* mathdown(game *c, int* change) {
                         c->tiles[k][j].value = b;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[k][j];
-                        printf("slid\n");
                         *change = 1; 
                     } else if (below_value == b) { 
                         c->tiles[k][j].value = b * 2;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[k][j]; 
-                        printf("mathed\n");
                         *change = 1;
                         break;  // Stop sliding after merging
                     } else { 
@@ -157,7 +153,6 @@ tile* mathleft(game *c, int *change) {
                         c->tiles[i][k].value = b;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k];
-                        printf("slid\n");
                         j = k; 
                         *change = 1;
                     }
@@ -165,7 +160,6 @@ tile* mathleft(game *c, int *change) {
                         c->tiles[i][k].value = b * 2;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k];
-                        printf("mathed\n");
                         *change = 1;
                         break;
                     }
@@ -200,7 +194,6 @@ tile* mathright(game *c, int *change) {
                         c->tiles[i][k].value = b;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k]; 
-                        printf("slid\n");
                         j = k; 
                         *change = 1;
                     }
@@ -208,7 +201,6 @@ tile* mathright(game *c, int *change) {
                         c->tiles[i][k].value = b * 2;
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[i][k]; 
-                        printf("mathed\n");
                         *change = 1;
                         break; 
                     }
@@ -365,8 +357,8 @@ int main(){
                     printf("Please used 'w' 'a' 's' 'd' keys. \n");
             }
         m=0;
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
+        for(int i = 0; i < SIZE; i++){
+            for(int j = 0; j < SIZE; j++){
                 if(g.tiles[i][j].value == 0){
                     m += 1;
                 }
@@ -375,7 +367,7 @@ int main(){
         if(m == 0) {
                 printf("GAME OVER\n");
                 printf("You lose\n");
-                break; // End the game loop
+                break; 
             }
         }
     }
