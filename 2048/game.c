@@ -4,6 +4,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <time.h>
+#include <math.h>
 
 #define SIZE 4
 int board[4][4];
@@ -237,16 +238,36 @@ void init_board(){
     }
 }
 
-void printboard(game *c){
-    for(int i = 0; i < SIZE; i++){
-            for(int j = 0; j < SIZE; j++){
-               // if(c->tiles[i][j].value != 0){
-                    printf("%d ",c->tiles[i][j].value);
-               // }
+void printboard(game *c) {
+    char *emojis[] = {
+        "⬜️ ",   // Emoji for 0
+        "😐 ",   // Emoji for 2
+        "🙂 ",   // Emoji for 4
+        "😊 ",   // Emoji for 8
+        "😃 ",   // Emoji for 16
+        "😁 ",   // Emoji for 32
+        "🤩 ",   // Emoji for 64
+        "🤗 ",   // Emoji for 128
+        "😍 ",   // Emoji for 256
+        "😎 ",   // Emoji for 512
+        "🥳 ",   // Emoji for 1024
+        "🤠 ",   // Emoji for 2048
+        "🤓 ",   // Emoji for 4096 - do we want to allow play after 2048 reached?
+    };
+
+    for(int i = 0; i < SIZE; i++) {
+        for(int j = 0; j < SIZE; j++) {
+            int value = c->tiles[i][j].value;
+            if (value >= 0 && value <= 4096) {
+                int index = (value == 0) ? 0 : (int)(log2(value));
+                printf("%s", emojis[index]); // print emoji for the value
+            } else {
+                printf("%d ", value); // print number if no corresponding emoji (shouldn't happen in actual gameplay)
             }
-        printf("\n");
         }
+        printf("\n");
     }
+}
 
 
 //move function.
