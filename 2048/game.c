@@ -33,17 +33,22 @@ int keepscore(game *c) {
     return c->score; 
 }
 
-//function add tiles to game.
-tile* addtile(game *c, tile *t){
-    int i = t->locationx;
-    int j = t->locationy;
-    if(i >= 0 && i <SIZE && j>=0 && j<SIZE){
-    return &c->tiles[i][j];
+int maxtile(game *c){
+    int max = c->tiles[0][0].value; 
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            int val = c->tiles[i][j].value;
+            if (val > max) { 
+                max = val; 
+            }
+
+        }
     }
-return NULL;
+    return max;
 }
+
 //function to generate random tile location and value.
-tile* randtile(game* c) {
+void randtile(game* c) {
     int d = (rand() % 2) ? 2 : 4;
     int i, j;
     do {
@@ -54,11 +59,9 @@ tile* randtile(game* c) {
     c->tiles[i][j].value = d;
     c->tiles[i][j].locationx = i;
     c->tiles[i][j].locationy = j;
-    return &(c->tiles[i][j]); 
 }
 //2048 math function for up.
-tile* mathup(game *c, int* change) {
-    printf("Moved up\n");
+void mathup(game *c, int* change) {
     tile* result = NULL;
 
     for(int j = 0; j < SIZE; j++) {
@@ -91,16 +94,13 @@ tile* mathup(game *c, int* change) {
         }
     }
     if(*change == 1){
-    tile* l = randtile(c);
-    addtile(c, l);
+    randtile(c);
     *change = 0;
     }
-    return result;
 }
 
 //2048 math function for down.
-tile* mathdown(game *c, int* change) {
-    printf("Moved down\n");
+void mathdown(game *c, int* change) {
     tile* result = NULL; 
 
     for (int i = SIZE - 2; i >= 0; i--) { 
@@ -120,27 +120,24 @@ tile* mathdown(game *c, int* change) {
                         c->tiles[i][j].value = 0;
                         result = &c->tiles[k][j]; 
                         *change = 1;
-                        break;  // Stop sliding after merging
+                        break;  
                     } else { 
-                        break;  // Stop sliding if encounter a different value
+                        break;  
                     }
-                    i = k;  // Move to the newly placed tile position
+                    i = k;  
                     k++;
                 }
             }
         }
     }
     if (*change == 1) {
-        tile* l = randtile(c);
-        addtile(c, l);
+        randtile(c);
         *change = 0;
     }
-    return result; 
 }
 
 //2048 math function for left.
-tile* mathleft(game *c, int *change) {
-    printf("Moved left\n");
+void mathleft(game *c, int *change) {
     tile* result = NULL;
     for(int i = 0; i < SIZE; i++) {
         for(int j = 1; j < SIZE; j++) { 
@@ -172,17 +169,14 @@ tile* mathleft(game *c, int *change) {
         }
     }
     if(*change == 1){
-    tile* l = randtile(c);
-    addtile(c, l);
+    randtile(c);
     *change = 0;
     }
-    return result;
 }
 
 //2048 math function for right.
-tile* mathright(game *c, int *change) {
+void mathright(game *c, int *change) {
     tile* result = NULL; 
-    printf("Moved right\n");
     for(int i = 0; i < SIZE; i++) { 
         for(int j = SIZE - 1; j >= 0; j--) { 
             int b = c->tiles[i][j].value; 
@@ -213,11 +207,9 @@ tile* mathright(game *c, int *change) {
         }
     }
     if(*change == 1){
-    tile* l = randtile(c);
-    addtile(c, l);
-    *change = 0;
+        randtile(c);
+        *change = 0;
     }
-    return result;
 }
       
 void init_board(){
@@ -231,7 +223,7 @@ void init_board(){
 void printboard(game *c) {
     char *emojis[] = {
         "⬜️ ",   // Emoji for 0
-        "😐 ",   // Emoji for 2
+        "😶 ",   // Emoji for 2
         "🙂 ",   // Emoji for 4
         "😊 ",   // Emoji for 8
         "😃 ",   // Emoji for 16
@@ -259,33 +251,27 @@ void printboard(game *c) {
     }
 }
 
-
-//move function.
-int move(void){
-	char input[4] = {'s','w','a','d'};
-	int m;
-	while (isspace(m = getchar()));
-	if (m == EOF)
-		return m;
-	for (int i = 0; i < 4; ++i)
-		if (m == input[i])
-			return i;
-	return EOF;
-}
-
 // getchar with termios.
 char getch() {
-    struct termios oldattr, newattr;
-    char ch;
-    tcgetattr(STDIN_FILENO, &oldattr);
-    newattr = oldattr;
-    newattr.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
-    return ch;
+    char buf = 0;
+    struct termios old = {0};
+    fflush(stdout);
+    if(tcgetattr(0, &old) < 0)
+        perror("tcsetattr()");
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    if(tcsetattr(0, TCSANOW, &old) < 0)
+        perror("tcsetattr ICANON");
+    if(read(0, &buf, 1) < 0)
+        perror ("read()");
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    if(tcsetattr(0, TCSADRAIN, &old) < 0)
+        perror ("tcsetattr ~ICANON");
+    return (buf);
 }
-
 
 int main(){
     printf("                LET'S PLAY 2048!\n");
@@ -299,62 +285,62 @@ int main(){
     if(input1 == 'c'){
     game g = {};
     init_board();
-    addtile(&g, randtile(&g));
-    addtile(&g, randtile(&g));
+    randtile(&g);
+    randtile(&g);
     keepscore(&g);
     printf("SCORE: %d\n", keepscore(&g));
     printboard(&g);
     int change = 0;
         while(1) {
-            printf("Enter your move (w/a/s/d): ");
+            printf("Enter your move (↑/←/↓/→): ");
             char input = getch();
             printf("%c\n", input); 
 
             switch (input) {
-                case 'w':
-                {
-                tile* moved_up = mathup(&g, &change);
-                    if (moved_up != NULL) {
-                        addtile(&g, moved_up);
-                        keepscore(&g);
-                        printf("SCORE: %d \n", keepscore(&g));
+                case '\033': // Escape sequence
+                    input = getch(); // Get the next character
+                    if (input == '[') { // Check if it's '[' (indicating arrow key)
+                        input = getch(); // Get the specific arrow key character
+                        switch (input) {
+                            case 'A': // Up arrow key
+                                mathup(&g, &change);
+                                keepscore(&g);
+                                maxtile(&g);
+                                printf("SCORE: %d \n", keepscore(&g));
+                                printf("MAX TILE: %d \n", maxtile(&g));
+                                printboard(&g);
+                                break;
+                            case 'D': // Left arrow key
+                                mathleft(&g, &change);
+                                keepscore(&g);
+                                maxtile(&g);
+                                printf("SCORE: %d \n", keepscore(&g));
+                                printf("MAX TILE: %d \n", maxtile(&g));
+                                printboard(&g);
+                                break;
+                            case 'B': // Down arrow key
+                                mathdown(&g, &change);
+                                keepscore(&g);
+                                maxtile(&g);
+                                printf("SCORE: %d \n", keepscore(&g));
+                                printf("MAX TILE: %d \n", maxtile(&g));
+                                printboard(&g);
+                                break;
+                            case 'C': // Right arrow key
+                                mathright(&g, &change);
+                                keepscore(&g);
+                                maxtile(&g);
+                                printf("SCORE: %d \n", keepscore(&g));
+                                printf("MAX TILE: %d \n", maxtile(&g));
+                                printboard(&g);
+                                break;
+                            default:
+                                printf("Please use arrow keys (↑/←/↓/→). \n");
+                        }
                     }
-                    printboard(&g);
                     break;
-                }
-                case 'a':{
-                tile* moved_left = mathleft(&g, &change);
-                    if (moved_left != NULL) {
-                        addtile(&g, moved_left);
-                        keepscore(&g);
-                        printf("SCORE: %d \n", keepscore(&g));
-                    }
-                    printboard(&g);
-                    break;
-                }    
-                case 's':{
-                tile* moved_down = mathdown(&g, &change);
-                    if (moved_down != NULL) {
-                        addtile(&g, moved_down);
-                        keepscore(&g);
-                        printf("SCORE: %d \n", keepscore(&g));
-                    
-                    }
-                    printboard(&g);
-                    break;
-                }
-                case 'd':{
-                tile* moved_right = mathright(&g, &change);
-                    if (moved_right != NULL) {
-                        addtile(&g, moved_right);
-                        keepscore(&g);
-                        printf("SCORE: %d \n", keepscore(&g));
-                    }
-                    printboard(&g);
-                    break;
-                }
                 default:
-                    printf("Please used 'w' 'a' 's' 'd' keys. \n");
+                    printf("Please use arrow keys (↑/←/↓/→). \n");
             }
         m=0;
         for(int i = 0; i < SIZE; i++){
@@ -372,4 +358,3 @@ int main(){
         }
     }
 }
-    

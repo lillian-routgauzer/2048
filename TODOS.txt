@@ -16,3 +16,5 @@ DONE
 -Points
 -Algorithm
 -Cute emojis
+-fix return type
+-add arrow operation instead of "AWSD"
