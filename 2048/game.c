@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include <stdbool.h>
 
 #define SIZE 4
 int board[4][4];
@@ -273,6 +274,48 @@ char getch() {
     return (buf);
 }
 
+// check if player has lost
+bool check_game_over(game *c) {
+    // first check for empty tiles
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (c->tiles[i][j].value == 0) {
+                return false;
+            }
+        }
+    }
+    // if board is full, check if 2 of the same block are next to eachother horizontally
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE - 1; j++) {
+            if (c->tiles[i][j].value == c->tiles[i][j + 1].value) {
+                return false;
+            }
+        }
+    }
+    // same for vertical 
+    for (int i = 0; i < SIZE - 1; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (c->tiles[i][j].value == c->tiles[i + 1][j].value) {
+                return false;
+            }
+        }
+    }
+    // game over if no moves
+    return true;
+}
+
+//check for win
+bool check_tile_2048(game *c) {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (c->tiles[i][j].value == 2048) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 int main(){
     printf("                LET'S PLAY 2048!\n");
     printf("                  HOW TO PLAY:\n");
@@ -342,19 +385,26 @@ int main(){
                 default:
                     printf("Please use arrow keys (↑/←/↓/→). \n");
             }
-        m=0;
-        for(int i = 0; i < SIZE; i++){
-            for(int j = 0; j < SIZE; j++){
-                if(g.tiles[i][j].value == 0){
-                    m += 1;
-                }
-            }
-        }
-        if(m == 0) {
+ 
+            if (check_game_over(&g)) {
                 printf("GAME OVER\n");
                 printf("You lose\n");
-                break; 
+                break;
             }
+            if (check_tile_2048(&g)) {
+                printf("You won 2048!\n");
+                printf("Do you want to keep playing? (y/n): ");
+                char choice = getch();
+                printf("\n"); 
+                if (choice == 'n' || choice == 'N') {
+                printf("Game over. Thank you for playing!\n");
+                break;
+                } else if (choice == 'y' || choice == 'Y') {
+                printf("Let's keep playing!\n");
+                } else {
+                printf("Invalid input. Please enter 'y' to keep playing or 'n' to end the game.\n");
+        }
+    }
         }
     }
 }
