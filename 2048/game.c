@@ -23,6 +23,7 @@ typedef struct game{
     int score;
 }game;
 
+//function that keeps score, uses tile value
 int keepscore(game *c) {
     c->score = 0; 
     for (int i = 0; i < SIZE; i++) {
@@ -33,7 +34,7 @@ int keepscore(game *c) {
     }
     return c->score; 
 }
-
+//function to calculate max tile value. 
 int maxtile(game *c){
     int max = c->tiles[0][0].value; 
     for (int i = 0; i < SIZE; i++) {
@@ -57,13 +58,13 @@ void randtile(game* c) {
         j = rand() % SIZE; 
     } while (c->tiles[i][j].value != 0); 
 
+    //updates values of tile struct
     c->tiles[i][j].value = d;
     c->tiles[i][j].locationx = i;
     c->tiles[i][j].locationy = j;
 }
 //2048 math function for up.
 void mathup(game *c, int* change) {
-    tile* result = NULL;
 
     for(int j = 0; j < SIZE; j++) {
         for(int i = 1; i < SIZE; i++) { 
@@ -75,14 +76,12 @@ void mathup(game *c, int* change) {
                     if(above_value == 0) {
                         c->tiles[k][j].value = b;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[k][j];
                         i = k; 
                         *change = 1;
                     }
                     else if(above_value == b) {
                         c->tiles[k][j].value = b * 2;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[k][j];
                         break;
                         *change = 1;
                     }
@@ -102,7 +101,6 @@ void mathup(game *c, int* change) {
 
 //2048 math function for down.
 void mathdown(game *c, int* change) {
-    tile* result = NULL; 
 
     for (int i = SIZE - 2; i >= 0; i--) { 
         for (int j = 0; j < SIZE; j++) { 
@@ -114,12 +112,10 @@ void mathdown(game *c, int* change) {
                     if (below_value == 0) { 
                         c->tiles[k][j].value = b;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[k][j];
                         *change = 1; 
                     } else if (below_value == b) { 
                         c->tiles[k][j].value = b * 2;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[k][j]; 
                         *change = 1;
                         break;  
                     } else { 
@@ -139,25 +135,27 @@ void mathdown(game *c, int* change) {
 
 //2048 math function for left.
 void mathleft(game *c, int *change) {
-    tile* result = NULL;
+    //iterate through every tile to find a tile with value (not 0)
     for(int i = 0; i < SIZE; i++) {
         for(int j = 1; j < SIZE; j++) { 
             int b = c->tiles[i][j].value;
             if(b != 0) {
+                //check tile to the left 
                 int k = j - 1;
+                //move left while left tile value remains 0
                 while(k >= 0) {
                     int left_value = c->tiles[i][k].value;
+                    //update tile values
                     if(left_value == 0) {
                         c->tiles[i][k].value = b;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[i][k];
                         j = k; 
                         *change = 1;
                     }
+                    //if left tile value is equal combine tiles (multiply value by 2 and delete previous location)
                     else if(left_value == b) {
                         c->tiles[i][k].value = b * 2;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[i][k];
                         *change = 1;
                         break;
                     }
@@ -169,15 +167,16 @@ void mathleft(game *c, int *change) {
             }
         }
     }
+    //if a change was made to the board (motion or combination) add a random tile to the board and set change variable back to 0
     if(*change == 1){
     randtile(c);
     *change = 0;
     }
 }
+//*the comments on function mathleft apply to the remaining math functions*
 
 //2048 math function for right.
 void mathright(game *c, int *change) {
-    tile* result = NULL; 
     for(int i = 0; i < SIZE; i++) { 
         for(int j = SIZE - 1; j >= 0; j--) { 
             int b = c->tiles[i][j].value; 
@@ -188,14 +187,12 @@ void mathright(game *c, int *change) {
                     if(right_value == 0) { 
                         c->tiles[i][k].value = b;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[i][k]; 
                         j = k; 
                         *change = 1;
                     }
                     else if(right_value == b) { 
                         c->tiles[i][k].value = b * 2;
                         c->tiles[i][j].value = 0;
-                        result = &c->tiles[i][k]; 
                         *change = 1;
                         break; 
                     }
@@ -212,7 +209,8 @@ void mathright(game *c, int *change) {
         *change = 0;
     }
 }
-      
+
+//initialize board      
 void init_board(){
 	for(int i = 0; i < SIZE; i++) {
         for(int j = 0; j < SIZE; j++) {
@@ -221,6 +219,7 @@ void init_board(){
     }
 }
 
+//print board with emojis instead of numbers
 void printboard(game *c) {
     char *emojis[] = {
         "⬜️ ",   // Emoji for 0
@@ -235,9 +234,9 @@ void printboard(game *c) {
         "😎 ",   // Emoji for 512
         "🥳 ",   // Emoji for 1024
         "🤠 ",   // Emoji for 2048
-        "🤓 ",   // Emoji for 4096 - do we want to allow play after 2048 reached?
+        "🤓 ",   // Emoji for 4096 
     };
- 
+ //use log base 2 to determine the tile hierarchy as it corresponds to the emojis (multiplication by 2 increases the value of log2 by 1)
     for(int i = 0; i < SIZE; i++) {
         for(int j = 0; j < SIZE; j++) {
             int value = c->tiles[i][j].value;
@@ -255,23 +254,44 @@ void printboard(game *c) {
 // getchar with termios.
 char getch() {
     char buf = 0;
-    struct termios old = {0};
+    
+    //structure to store original terminal settings
+    struct termios old = {0}; 
     fflush(stdout);
-    if(tcgetattr(0, &old) < 0)
+    
+    //take current terminal attributes and store them in 'old'
+    if(tcgetattr(0, &old) < 0){
         perror("tcsetattr()");
+    }
+    
+    //turns off canonical mode
     old.c_lflag &= ~ICANON;
     old.c_lflag &= ~ECHO;
+
+    //set minimum number of characters to read to 1 and timeout to 0 seconds
     old.c_cc[VMIN] = 1;
     old.c_cc[VTIME] = 0;
-    if(tcsetattr(0, TCSANOW, &old) < 0)
+
+    //apply modified terminal settings
+    if(tcsetattr(0, TCSANOW, &old) < 0){
         perror("tcsetattr ICANON");
-    if(read(0, &buf, 1) < 0)
-        perror ("read()");
+    }
+    //read a single character from the terminal
+    if(read(0, &buf, 1) < 0){
+        perror("read()");
+    }
+
+    //restore og terminal settings
     old.c_lflag |= ICANON;
     old.c_lflag |= ECHO;
-    if(tcsetattr(0, TCSADRAIN, &old) < 0)
-        perror ("tcsetattr ~ICANON");
-    return (buf);
+
+    //apply restored terminal settings
+    if(tcsetattr(0, TCSADRAIN, &old) < 0){
+        perror("tcsetattr ~ICANON");
+    }
+
+    //return the character read from the terminal
+    return buf;
 }
 
 // check if player has lost
@@ -340,20 +360,21 @@ int main(){
             printf("%c\n", input); 
 
             switch (input) {
-                case '\033': // Escape sequence
-                    input = getch(); // Get the next character
-                    if (input == '[') { // Check if it's '[' (indicating arrow key)
-                        input = getch(); // Get the specific arrow key character
+                case '\033': //Escape sequence
+                    input = getch(); //Get the next character
+                    if (input == '[') { //Check if it's '[' (indicating arrow key)
+                        input = getch(); //Get the specific arrow key character
                         switch (input) {
-                            case 'A': // Up arrow key
-                                mathup(&g, &change);
-                                keepscore(&g);
-                                maxtile(&g);
+                            case 'A': //Up arrow key
+                                mathup(&g, &change);//make moves
+                                keepscore(&g);//count up points
+                                maxtile(&g);//find max tile
+                                //print found values
                                 printf("SCORE: %d \n", keepscore(&g));
                                 printf("MAX TILE: %d \n", maxtile(&g));
                                 printboard(&g);
                                 break;
-                            case 'D': // Left arrow key
+                            case 'D': //Left arrow key
                                 mathleft(&g, &change);
                                 keepscore(&g);
                                 maxtile(&g);
@@ -361,7 +382,7 @@ int main(){
                                 printf("MAX TILE: %d \n", maxtile(&g));
                                 printboard(&g);
                                 break;
-                            case 'B': // Down arrow key
+                            case 'B': //Down arrow key
                                 mathdown(&g, &change);
                                 keepscore(&g);
                                 maxtile(&g);
@@ -369,7 +390,7 @@ int main(){
                                 printf("MAX TILE: %d \n", maxtile(&g));
                                 printboard(&g);
                                 break;
-                            case 'C': // Right arrow key
+                            case 'C': //Right arrow key
                                 mathright(&g, &change);
                                 keepscore(&g);
                                 maxtile(&g);
@@ -385,12 +406,13 @@ int main(){
                 default:
                     printf("Please use arrow keys (↑/←/↓/→). \n");
             }
- 
+            //check if the game is over after every move (is the board full and no moves can be made)
             if (check_game_over(&g)) {
                 printf("GAME OVER\n");
                 printf("You lose\n");
                 break;
             }
+            //check of the highest value is 2048 and allow user to continue playing to achieve 4096
             if (check_tile_2048(&g)) {
                 printf("You won 2048!\n");
                 printf("Do you want to keep playing? (y/n): ");
