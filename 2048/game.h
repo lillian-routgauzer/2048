@@ -28,7 +28,7 @@ typedef struct game{
 }game;
 
 
-void init_board(&g);
+void init_board(game *c);
 void randtile(game* c);
 int keepscore(game *c);
 void printboard(game *c);
