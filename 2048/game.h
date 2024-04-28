@@ -1,5 +1,5 @@
-//#ifndef 2048
-//#define 2048
+#ifndef game2048
+#define game2048
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,4 +42,4 @@ bool check_game_over(game *c);
 bool check_tile_2048(game *c);
 
 
-//#endif 
+#endif 
