@@ -1,10 +1,12 @@
 #include "game.h"
 
 //initialize board      
-void init_board(){
-	for(int i = 0; i < SIZE; i++) {
-        for(int j = 0; j < SIZE; j++) {
-            board[i][j] = 0;
+void init_board(game *g) {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            g->tiles[i][j].value = 0;
+            g->tiles[i][j].locationx = i;
+            g->tiles[i][j].locationy = j;
         }
     }
 }

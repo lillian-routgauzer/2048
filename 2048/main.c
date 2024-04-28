@@ -11,7 +11,7 @@ int main(){
     char input1 = getch();
     if(input1 == 'c'){
     game g = {};
-    init_board();
+    init_board(&g);
     randtile(&g);
     randtile(&g);
     keepscore(&g);

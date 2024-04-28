@@ -1,5 +1,5 @@
-#ifndef game2048
-#define game2048
+//#ifndef game2048
+//#define game2048
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +12,7 @@
 
 #define SIZE 4
 
-int board[4][4];
+extern int board[4][4];
 
 //defines each individual tile.
 typedef struct tile{
@@ -42,4 +42,4 @@ bool check_game_over(game *c);
 bool check_tile_2048(game *c);
 
 
-#endif 
+//#endif 
