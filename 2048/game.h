@@ -1,6 +1,3 @@
-//#ifndef game2048
-//#define game2048
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -40,6 +37,3 @@ char getch();
 int maxtile(game *c);
 bool check_game_over(game *c);
 bool check_tile_2048(game *c);
-
-
-//#endif 
