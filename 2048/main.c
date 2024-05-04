@@ -18,6 +18,7 @@ int main() {
     printf("SCORE: %d\n", keepscore(&g));
     printboard(&g);
     int change = 0;
+    int s;
     while (1) {
       printf("Enter your move (↑/←/↓/→): ");
       char input = getch();
@@ -31,34 +32,37 @@ int main() {
           switch (input) {
           case 'A':              // Up arrow key
             mathup(&g, &change); // make moves
-            keepscore(&g);       // count up points
+            s = keepscore(&g);       // count up points
             maxtile(&g);         // find max tile
             // print found values
-            printf("xSCORE: %d\n", keepscore(&g));
+            printf("xSCORE: %d\n", s);
             printf("MAX TILE: %d \n", maxtile(&g));
             printboard(&g);
             break;
           case 'B': // Down arrow key
             mathdown(&g, &change);
-            keepscore(&g);
-            maxtile(&g);
-            printf("xSCORE: %d\n", keepscore(&g));
+            s = keepscore(&g);       // count up points
+            maxtile(&g);         // find max tile
+            // print found values
+            printf("xSCORE: %d\n", s);
             printf("MAX TILE: %d \n", maxtile(&g));
             printboard(&g);
             break;
           case 'C': // Right arrow key
             mathright(&g, &change);
-            keepscore(&g);
-            maxtile(&g);
-            printf("xSCORE: %d\n", keepscore(&g));
+            s = keepscore(&g);       // count up points
+            maxtile(&g);         // find max tile
+            // print found values
+            printf("xSCORE: %d\n", s);
             printf("MAX TILE: %d \n", maxtile(&g));
             printboard(&g);
             break;
           case 'D': // Left arrow key
             mathleft(&g, &change);
-            keepscore(&g);
-            maxtile(&g);
-            printf("xSCORE: \n", keepscore(&g));
+            s = keepscore(&g);       // count up points
+            maxtile(&g);         // find max tile
+            // print found values
+            printf("xSCORE: %d\n", s);
             printf("MAX TILE: %d \n", maxtile(&g));
             printboard(&g);
             break;
